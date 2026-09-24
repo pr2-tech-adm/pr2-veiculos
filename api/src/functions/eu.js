@@ -1,11 +1,5 @@
 const { app } = require('@azure/functions');
-
-function lerUsuario(request) {
-  const cabecalho = request.headers.get('x-ms-client-principal');
-  if (!cabecalho) return null;
-  const texto = Buffer.from(cabecalho, 'base64').toString('utf8');
-  return JSON.parse(texto);
-}
+const { lerUsuario } = require('../lib/usuario');
 
 app.http('eu', {
   methods: ['GET'],

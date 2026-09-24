@@ -1,7 +1,7 @@
 {
   "routes": [
     { "route": "/admin/*", "allowedRoles": ["admin"] },
-    { "route": "/api/admin/*", "allowedRoles": ["admin"] },
+    { "route": "/api/gestao/*", "allowedRoles": ["admin"] },
     { "route": "/api/*", "allowedRoles": ["tecnico", "admin"] },
     { "route": "/*", "allowedRoles": ["tecnico", "admin"] }
   ],
