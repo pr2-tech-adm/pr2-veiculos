@@ -3,11 +3,26 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Controle de Veículos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Controle de Veículos - PR2</title>
+    <link rel="stylesheet" href="css/app.css">
 </head>
 
 <body>
-    <h1>Controle de Veículos - PR2</h1>
+    <header class="topo">
+        <h1>Controle de Veículos</h1>
+        <div class="usuario">
+            <span id="usuario">...</span>
+            <a href="/.auth/logout">Sair</a>
+        </div>
+    </header>
+    <main>
+        <h2>Veículos disponíveis</h2>
+        <p id="mensagem" class="mensagem">Carregando...</p>
+        <ul id="lista" class="lista"></ul>
+    </main>
+    <script src="js/api.js"></script>
+    <script src="js/home.js"></script>
 </body>
 
 </html>
