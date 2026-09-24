@@ -1,5 +1,7 @@
 {
   "routes": [
+    { "route": "/manifest.json", "allowedRoles": ["anonymous"] },
+    { "route": "/icons/*", "allowedRoles": ["anonymous"] },
     { "route": "/admin/*", "allowedRoles": ["admin"] },
     { "route": "/api/gestao/*", "allowedRoles": ["admin"] },
     { "route": "/api/*", "allowedRoles": ["tecnico", "admin"] },
