@@ -8,4 +8,12 @@ function temRole(usuario, role) {
   return !!usuario && usuario.userRoles.includes(role);
 }
 
-module.exports = { lerUsuario, temRole };
+function normalizar(valor) {
+  return String(valor || '').trim().toLowerCase();
+}
+
+function mesmoUsuario(a, b) {
+  return normalizar(a) !== '' && normalizar(a) === normalizar(b);
+}
+
+module.exports = { lerUsuario, temRole, normalizar, mesmoUsuario };

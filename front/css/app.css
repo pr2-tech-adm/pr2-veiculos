@@ -204,3 +204,28 @@ button.botao:disabled {
     gap: 12px;
     padding: 12px 0;
 }
+
+.assinatura {
+    width: 100%;
+    aspect-ratio: 600 / 220;
+    background: #fff;
+    border: 2px dashed #9aa5b1;
+    border-radius: 8px;
+    touch-action: none;
+}
+
+.sucesso {
+    background: #e6f6ec;
+    border-radius: 10px;
+    padding: 16px;
+    display: grid;
+    gap: 12px;
+}
+
+.sucesso h2 {
+    margin: 0;
+}
+
+.sucesso .botao {
+    text-align: center;
+}

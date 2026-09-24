@@ -50,8 +50,17 @@
             <p class="mensagem">Fotografe agora, com a câmera. Não é possível anexar fotos da galeria.</p>
             <div id="fotos" class="fotos"></div>
 
+            <h3>Assinatura do responsável</h3>
+            <canvas id="assinatura" class="assinatura" width="600" height="220"></canvas>
+            <button type="button" id="limpar-assinatura" class="botao secundario">Limpar assinatura</button>
+
             <button type="submit" id="enviar" class="botao grande" disabled>Confirmar retirada</button>
         </form>
+        <section id="sucesso" class="sucesso" hidden>
+            <h2>Retirada registrada</h2>
+            <p id="sucesso-detalhe"></p>
+            <a href="index.html" class="botao">Voltar para a lista</a>
+        </section>
     </main>
 
     <div id="camera" class="camera" hidden>
@@ -65,6 +74,7 @@
 
     <script src="js/api.js"></script>
     <script src="js/camera.js"></script>
+    <script src="js/assinatura.js"></script>
     <script src="js/retirada.js"></script>
 </body>
 
