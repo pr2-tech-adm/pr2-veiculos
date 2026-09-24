@@ -229,3 +229,107 @@ button.botao:disabled {
 .sucesso .botao {
     text-align: center;
 }
+
+.info {
+    background: #e8f1fb;
+    color: #1f2933;
+    padding: 10px 12px;
+    border-radius: 8px;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox input {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+}
+
+.cartao.em-uso {
+    border-left: 4px solid #d97706;
+}
+
+main.largo {
+    max-width: 960px;
+}
+
+.filtros {
+    display: flex;
+    gap: 16px;
+    align-items: end;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.detalhe {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 20;
+    overflow-y: auto;
+    padding: 12px;
+}
+
+.detalhe-caixa {
+    background: #fff;
+    max-width: 900px;
+    margin: 0 auto;
+    border-radius: 10px;
+    padding: 16px;
+    display: grid;
+    gap: 14px;
+}
+
+.resumo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.resumo div {
+    background: var(--fundo);
+    padding: 10px;
+    border-radius: 8px;
+    display: grid;
+    gap: 4px;
+    font-size: 0.9rem;
+    align-content: start;
+}
+
+.aviso-avaria {
+    background: #fde8e8;
+    color: #9b1c1c;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin: 0;
+}
+
+.comparativo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.comp-titulo {
+    grid-column: 1 / -1;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.comp-celula img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #e4e7eb;
+}
+
+.comp-celula.assin img {
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid #cbd2d9;
+}

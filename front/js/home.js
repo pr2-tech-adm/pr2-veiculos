@@ -1,41 +1,67 @@
+function criarCartao(titulo, detalhe, textoBotao, destino) {
+  const item = document.createElement('li');
+  item.className = 'cartao';
+
+  const info = document.createElement('div');
+  const tituloEl = document.createElement('strong');
+  tituloEl.textContent = titulo;
+  const detalheEl = document.createElement('span');
+  detalheEl.textContent = detalhe;
+  info.append(tituloEl, detalheEl);
+
+  const botao = document.createElement('a');
+  botao.className = 'botao';
+  botao.href = destino;
+  botao.textContent = textoBotao;
+
+  item.append(info, botao);
+  return item;
+}
+
+function formatarData(iso) {
+  return iso ? new Date(iso).toLocaleString('pt-BR') : '';
+}
+
 async function iniciar() {
   const mensagem = document.getElementById('mensagem');
   const lista = document.getElementById('lista');
+  const secaoUso = document.getElementById('em-uso');
+  const listaUso = document.getElementById('lista-uso');
 
   try {
     const eu = await chamarApi('/api/eu');
     document.getElementById('usuario').textContent = eu.usuario;
 
-    const veiculos = await chamarApi('/api/veiculos');
-    lista.replaceChildren();
+    const [emUso, disponiveis] = await Promise.all([
+      chamarApi('/api/registros/meu-uso'),
+      chamarApi('/api/veiculos')
+    ]);
 
-    if (veiculos.length === 0) {
+    listaUso.replaceChildren();
+    secaoUso.hidden = emUso.length === 0;
+    for (const v of emUso) {
+      let detalhe = `${v.modelo} · retirado em ${formatarData(v.retiradaEm)}`;
+      if (v.destino) detalhe += ` · ${v.destino}`;
+      const cartao = criarCartao(v.placa, detalhe, 'Entregar', `entrega.html?placa=${encodeURIComponent(v.placa)}`);
+      cartao.classList.add('em-uso');
+      listaUso.append(cartao);
+    }
+
+    lista.replaceChildren();
+    if (disponiveis.length === 0) {
       mensagem.textContent = 'Nenhum veículo disponível no momento.';
+      mensagem.hidden = false;
       return;
     }
     mensagem.hidden = true;
 
-    for (const v of veiculos) {
-      const item = document.createElement('li');
-      item.className = 'cartao';
-
-      const info = document.createElement('div');
-      const titulo = document.createElement('strong');
-      titulo.textContent = v.placa;
-      const detalhe = document.createElement('span');
-      detalhe.textContent = `${v.modelo} · ${v.cor} · ${v.kmAtual} km`;
-      info.append(titulo, detalhe);
-
-      const botao = document.createElement('a');
-      botao.className = 'botao';
-      botao.href = `retirada.html?placa=${encodeURIComponent(v.placa)}`;
-      botao.textContent = 'Retirar';
-
-      item.append(info, botao);
-      lista.append(item);
+    for (const v of disponiveis) {
+      const detalhe = `${v.modelo} · ${v.cor} · ${v.kmAtual} km`;
+      lista.append(criarCartao(v.placa, detalhe, 'Retirar', `retirada.html?placa=${encodeURIComponent(v.placa)}`));
     }
   } catch (erro) {
     mensagem.textContent = 'Não foi possível carregar: ' + erro.message;
+    mensagem.hidden = false;
   }
 }
 

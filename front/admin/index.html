@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Administração - Controle de Veículos</title>
+    <link rel="stylesheet" href="../css/app.css">
+</head>
+
+<body>
+    <header class="topo">
+        <h1>Administração</h1>
+        <div class="usuario"><a href="../index.html">Voltar ao app</a></div>
+    </header>
+
+    <main class="largo">
+        <h2>Histórico de usos</h2>
+
+        <div class="filtros">
+            <label>Veículo
+                <select id="filtro-placa">
+                    <option value="">Todos</option>
+                </select>
+            </label>
+            <label class="checkbox">
+                <input type="checkbox" id="filtro-avaria">
+                Só com avaria
+            </label>
+        </div>
+
+        <p id="mensagem" class="mensagem">Carregando...</p>
+        <ul id="lista" class="lista"></ul>
+    </main>
+
+    <div id="detalhe" class="detalhe" hidden>
+        <div class="detalhe-caixa">
+            <button type="button" id="fechar-detalhe" class="botao secundario">Fechar</button>
+            <div id="detalhe-corpo"></div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="admin.js"></script>
+</body>
+
+</html>
