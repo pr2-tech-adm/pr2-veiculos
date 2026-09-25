@@ -4,6 +4,7 @@ const ANGULOS = [
   { id: 'lateralDireita', rotulo: 'Lateral direita' },
   { id: 'lateralEsquerda', rotulo: 'Lateral esquerda' },
   { id: 'interior', rotulo: 'Interior' },
+  { id: 'interior2', rotulo: 'Interior 2' },
   { id: 'painel', rotulo: 'Painel (km)' },
   { id: 'assinatura', rotulo: 'Assinatura' }
 ];
@@ -19,17 +20,26 @@ function data(iso) {
   return iso ? new Date(iso).toLocaleString('pt-BR') : '—';
 }
 
+function dataCurta(iso) {
+  return iso ? new Date(iso).toLocaleDateString('pt-BR') : '—';
+}
+
 function urlImagem(r, momento, angulo) {
   const extensao = angulo === 'assinatura' ? 'png' : 'jpg';
   return `/api/gestao/foto/${encodeURIComponent(r.placa)}/${encodeURIComponent(r.id)}/${momento}-${angulo}.${extensao}`;
 }
 
-function celula(r, momento, angulo, disponivel) {
+function rotuloAngulo(angulo, momento, r) {
+  if (angulo.id !== 'assinatura') return angulo.rotulo;
+  const quando = momento === 'retirada' ? r.retiradaEm : r.entregaEm;
+  const prefixo = momento === 'retirada' ? 'Assinatura Retirada' : 'Assinatura Entrega';
+  return `${prefixo} - ${dataCurta(quando)}`;
+}
+
+function celulaFoto(r, momento, angulo) {
   const caixa = el('div', angulo.id === 'assinatura' ? 'comp-celula assin' : 'comp-celula');
-  if (!disponivel) {
-    caixa.append(el('span', 'mensagem', 'Ainda não entregue'));
-    return caixa;
-  }
+  caixa.append(el('span', 'foto-rotulo', rotuloAngulo(angulo, momento, r)));
+
   const url = urlImagem(r, momento, angulo.id);
   const link = el('a');
   link.href = url;
@@ -39,6 +49,9 @@ function celula(r, momento, angulo, disponivel) {
   imagem.src = url;
   imagem.alt = `${angulo.rotulo} (${momento})`;
   imagem.loading = 'lazy';
+  imagem.addEventListener('error', () => {
+    imagem.replaceWith(el('span', 'mensagem', 'Foto não encontrada'));
+  });
   link.append(imagem);
   caixa.append(link);
   return caixa;
@@ -49,6 +62,17 @@ function bloco(titulo, linhas) {
   caixa.append(el('strong', '', titulo));
   for (const linha of linhas) caixa.append(el('span', '', linha));
   return caixa;
+}
+
+function renderFotos(container, r, momento) {
+  container.replaceChildren();
+  if (momento === 'entrega' && r.status !== 'Concluido') {
+    container.append(el('p', 'mensagem', 'Este veículo ainda não foi entregue.'));
+    return;
+  }
+  const grade = el('div', 'comparativo-simples');
+  for (const angulo of ANGULOS) grade.append(celulaFoto(r, momento, angulo));
+  container.append(grade);
 }
 
 function abrirDetalhe(r) {
@@ -84,16 +108,26 @@ function abrirDetalhe(r) {
   );
   corpo.append(resumo);
 
-  const comparativo = el('div', 'comparativo');
-  comparativo.append(el('strong', '', 'Retirada'), el('strong', '', 'Entrega'));
-  for (const angulo of ANGULOS) {
-    comparativo.append(el('div', 'comp-titulo', angulo.rotulo));
-    comparativo.append(
-      celula(r, 'retirada', angulo, true),
-      celula(r, 'entrega', angulo, concluido)
-    );
+  const abas = el('div', 'abas-fotos');
+  const btnRetirada = el('button', 'aba-botao ativa', 'Fotos da retirada');
+  btnRetirada.type = 'button';
+  const btnEntrega = el('button', 'aba-botao', 'Fotos da entrega');
+  btnEntrega.type = 'button';
+  abas.append(btnRetirada, btnEntrega);
+  corpo.append(abas);
+
+  const painelFotos = el('div', 'painel-fotos');
+  corpo.append(painelFotos);
+
+  function selecionar(momento) {
+    btnRetirada.classList.toggle('ativa', momento === 'retirada');
+    btnEntrega.classList.toggle('ativa', momento === 'entrega');
+    renderFotos(painelFotos, r, momento);
   }
-  corpo.append(comparativo);
+
+  btnRetirada.addEventListener('click', () => selecionar('retirada'));
+  btnEntrega.addEventListener('click', () => selecionar('entrega'));
+  selecionar('retirada');
 
   document.getElementById('detalhe').hidden = false;
 }
@@ -143,6 +177,38 @@ async function carregar() {
   }
 }
 
+function linhaResumo(v, mostrarUsuario) {
+  const linha = el('li', 'linha-resumo');
+  linha.append(el('strong', '', v.placa));
+  linha.append(el('span', '', v.modelo));
+  if (mostrarUsuario && v.usuarioAtual) linha.append(el('span', 'linha-resumo-usuario', v.usuarioAtual));
+  return linha;
+}
+
+function montarResumo(veiculos) {
+  const disponiveis = veiculos.filter((v) => v.status === 'Disponivel');
+  const emUso = veiculos.filter((v) => v.status === 'EmUso');
+
+  document.getElementById('contagem-disponiveis').textContent = disponiveis.length;
+  document.getElementById('contagem-em-uso').textContent = emUso.length;
+
+  const listaDisponiveis = document.getElementById('lista-disponiveis');
+  listaDisponiveis.replaceChildren();
+  if (disponiveis.length === 0) {
+    listaDisponiveis.append(el('li', 'mensagem', 'Nenhum veículo parado.'));
+  } else {
+    for (const v of disponiveis) listaDisponiveis.append(linhaResumo(v, false));
+  }
+
+  const listaEmUso = document.getElementById('lista-resumo-em-uso');
+  listaEmUso.replaceChildren();
+  if (emUso.length === 0) {
+    listaEmUso.append(el('li', 'mensagem', 'Nenhum veículo em uso.'));
+  } else {
+    for (const v of emUso) listaEmUso.append(linhaResumo(v, true));
+  }
+}
+
 async function carregarPlacas() {
   const veiculos = await chamarApi('/api/veiculos?status=todos');
   const filtro = document.getElementById('filtro-placa');
@@ -151,6 +217,7 @@ async function carregarPlacas() {
     opcao.value = v.placa;
     filtro.append(opcao);
   }
+  return veiculos;
 }
 
 async function iniciar() {
@@ -161,9 +228,10 @@ async function iniciar() {
   document.getElementById('filtro-avaria').addEventListener('change', carregar);
 
   try {
-    await carregarPlacas();
+    const veiculos = await carregarPlacas();
+    montarResumo(veiculos);
   } catch {
-    // sem a lista de veículos, o filtro fica só com "Todos"
+    // sem a lista de veículos, o resumo e o filtro ficam vazios
   }
   carregar();
 }

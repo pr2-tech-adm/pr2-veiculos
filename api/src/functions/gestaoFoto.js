@@ -4,7 +4,7 @@ const { obterContainer } = require('../lib/blobs');
 
 const PLACA = /^[A-Z0-9]{7}$/;
 const ID = /^[0-9]+-[a-f0-9]{6}$/;
-const ARQUIVO = /^(retirada|entrega)-(frente|traseira|lateralDireita|lateralEsquerda|interior|painel|assinatura)\.(jpg|png)$/;
+const ARQUIVO = /^(retirada|entrega)-(frente|traseira|lateralDireita|lateralEsquerda|interior|interior2|painel|assinatura)\.(jpg|png)$/;
 
 app.http('gestaoFoto', {
   methods: ['GET'],

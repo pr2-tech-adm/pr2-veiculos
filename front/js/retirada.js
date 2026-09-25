@@ -4,6 +4,7 @@ const FOTOS = [
   { id: 'lateralDireita', rotulo: 'Lateral direita' },
   { id: 'lateralEsquerda', rotulo: 'Lateral esquerda' },
   { id: 'interior', rotulo: 'Interior' },
+  { id: 'interior2', rotulo: 'Interior 2' },
   { id: 'painel', rotulo: 'Painel (km)' }
 ];
 

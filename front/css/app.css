@@ -333,3 +333,106 @@ main.largo {
     background: #fff;
     border: 1px solid #cbd2d9;
 }
+
+.painel-resumo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.resumo-caixa {
+    background: #fff;
+    border-radius: 10px;
+    padding: 14px 16px;
+}
+
+.resumo-caixa h3 {
+    margin: 0 0 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+}
+
+.contagem {
+    background: var(--cor);
+    color: #fff;
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 0.85rem;
+}
+
+.lista-resumo {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.linha-resumo {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.85rem;
+    padding: 6px 0;
+    border-bottom: 1px solid #e4e7eb;
+}
+
+.linha-resumo-usuario {
+    color: #52606d;
+}
+
+.abas-fotos {
+    display: flex;
+    gap: 8px;
+}
+
+.aba-botao {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #cbd2d9;
+    background: #fff;
+    border-radius: 8px;
+    font: inherit;
+    cursor: pointer;
+}
+
+.aba-botao.ativa {
+    background: var(--cor);
+    color: #fff;
+    border-color: var(--cor);
+}
+
+.comparativo-simples {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.comp-celula {
+    display: grid;
+    gap: 6px;
+}
+
+.foto-rotulo {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.comp-celula img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #e4e7eb;
+}
+
+.comp-celula.assin img {
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid #cbd2d9;
+}

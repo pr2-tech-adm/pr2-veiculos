@@ -3,25 +3,9 @@ const crypto = require('crypto');
 const { lerUsuario, temRole } = require('../lib/usuario');
 const { obterTabela } = require('../lib/tabelas');
 const { obterContainer } = require('../lib/blobs');
-
-const FOTOS = ['frente', 'traseira', 'lateralDireita', 'lateralEsquerda', 'interior', 'painel'];
-const COMBUSTIVEIS = ['Reserva', '1/4', '1/2', '3/4', 'Cheio'];
-const MAX_FOTO = 3 * 1024 * 1024;
-const MAX_ASSINATURA = 512 * 1024;
+const { FOTOS, COMBUSTIVEIS, lerChecklist, sha256 } = require('../lib/arquivos');
 
 const erro = (status, mensagem) => ({ status, jsonBody: { erro: mensagem } });
-
-const ehJpeg = (b) => b.length > 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff;
-const ehPng = (b) => b.length > 4 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47;
-
-async function lerArquivo(form, campo, max, validador) {
-  const arquivo = form.get(campo);
-  if (!arquivo || typeof arquivo === 'string' || arquivo.size > max) return null;
-  const buffer = Buffer.from(await arquivo.arrayBuffer());
-  return validador(buffer) ? buffer : null;
-}
-
-const sha256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('hex');
 
 app.http('registrosRetirar', {
   methods: ['POST'],
@@ -53,14 +37,8 @@ app.http('registrosRetirar', {
     if (!destino) return erro(400, 'Destino é obrigatório');
     if (Number.isNaN(Date.parse(devolucaoPrevista))) return erro(400, 'Data de devolução inválida');
 
-    const arquivos = {};
-    for (const nome of FOTOS) {
-      const buffer = await lerArquivo(form, nome, MAX_FOTO, ehJpeg);
-      if (!buffer) return erro(400, `Foto obrigatória ausente ou inválida: ${nome}`);
-      arquivos[nome] = buffer;
-    }
-    const assinatura = await lerArquivo(form, 'assinatura', MAX_ASSINATURA, ehPng);
-    if (!assinatura) return erro(400, 'Assinatura obrigatória ausente ou inválida');
+    const checklist = await lerChecklist(form);
+    if (checklist.erro) return erro(400, checklist.erro);
 
     const tabelaVeiculos = obterTabela('Veiculos');
     let veiculo;
@@ -99,13 +77,13 @@ app.http('registrosRetirar', {
       for (const nome of FOTOS) {
         await container
           .getBlockBlobClient(`${placa}/${id}/retirada-${nome}.jpg`)
-          .uploadData(arquivos[nome], { blobHTTPHeaders: { blobContentType: 'image/jpeg' } });
-        hashes[nome] = sha256(arquivos[nome]);
+          .uploadData(checklist.fotos[nome], { blobHTTPHeaders: { blobContentType: 'image/jpeg' } });
+        hashes[nome] = sha256(checklist.fotos[nome]);
       }
       await container
         .getBlockBlobClient(`${placa}/${id}/retirada-assinatura.png`)
-        .uploadData(assinatura, { blobHTTPHeaders: { blobContentType: 'image/png' } });
-      hashes.assinatura = sha256(assinatura);
+        .uploadData(checklist.assinatura, { blobHTTPHeaders: { blobContentType: 'image/png' } });
+      hashes.assinatura = sha256(checklist.assinatura);
 
       await obterTabela('Registros').createEntity({
         partitionKey: placa,
