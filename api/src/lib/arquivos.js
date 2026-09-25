@@ -1,8 +1,8 @@
 const crypto = require('crypto');
 
-const FOTOS = ['frente', 'traseira', 'lateralDireita', 'lateralEsquerda', 'interior', 'interior2', 'painel']; // ⚠️ confirmar - ver abaixo
+const FOTOS = ['frente', 'traseira', 'lateralDireita', 'lateralEsquerda', 'interior', 'interior2', 'painel'];
 
-const COMBUSTIVEIS = ['Vazio', 'Reserva', '1/4', '1/2', '3/4', 'Cheio']; // ⚠️ chute - confirmar
+const COMBUSTIVEIS = ['Reserva', '1/4', '1/2', '3/4', 'Cheio'];
 
 function sha256(buffer) {
   return crypto.createHash('sha256').update(buffer).digest('hex');
